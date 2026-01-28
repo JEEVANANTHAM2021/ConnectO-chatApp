@@ -35,7 +35,7 @@ const SignUpPage = () => {
     if(success===true) signup(formData);
   };
   return (
-    <div className='h-screen grid lg:grid-cols-2'>
+    <div className='min-h-screen grid lg:grid-cols-2'>
       {/* Left Side of Page */}
       <div className='flex flex-col justify-center items-center p-6 sm:p-12'>
           <div className='w-full max-w-md space-y-8'>
@@ -59,7 +59,7 @@ const SignUpPage = () => {
                 </label>
                 <div className='relative'>
                   <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                    <User className='sizes-5 text-base-content/40' />
+                    <User className='size-5 text-base-content/40' />
                   </div>
                   <input type='text'
                   className={`input input-bordered w-full pl-10`}
@@ -79,7 +79,7 @@ const SignUpPage = () => {
                   <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
                     <Mail className='size-5 text-base-content/40'/>
                   </div>
-                  <input type='text'
+                  <input type='email'
                   className={`input input-bordered w-full pl-10`}
                   placeholder='you@example.com'
                   value={formData.email}
@@ -89,31 +89,40 @@ const SignUpPage = () => {
               </div>
 
               {/* Password Box */}
-              <div className='form-control'>
-                <label className='label'>
-                  <span className='label-text font-medium'>Password</span>
-                </label>
-                <div className='relative'>
-                  <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                    <Lock className='size-5 text-base-content/40'/>
-                  </div>
-                  <input type={showPassword ? "text" : "password"}
-                  className={`input input-bordered w-full pl-10`}
-                  placeholder='*********'
-                  value={formData.password}
-                  onChange={(e) => setFormData({...formData, password: e.target.value })}
-                  />
-                  <button type='button'
-                      className='absoulte inset-y-0 right-0 pr-3 flex items-center'
-                      onClick={() => setShowPassword(!showPassword)}>
-                        {showPassword ? (
-                        <EyeOff className='size-5 text-base-content/40' />
+              <div className="form-control">
+                  <label className="label">
+                    <span className="label-text font-medium">Password</span>
+                  </label>
+
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                      <Lock className="size-5 text-base-content/40" />
+                    </div>
+
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      className="input input-bordered w-full pl-10 pr-10"
+                      placeholder="********"
+                      value={formData.password}
+                      onChange={(e) =>
+                        setFormData({ ...formData, password: e.target.value })
+                      }
+                    />
+
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="size-5 text-base-content/40" />
                       ) : (
-                        <Eye className='size-5 text-base-content/40' />
+                        <Eye className="size-5 text-base-content/40" />
                       )}
-                  </button>
+                    </button>
+                  </div>
                 </div>
-              </div>
+
 
               <button type='submit' className='btn btn-primary w-full' disabled={isSigningUp}>
                 {isSigningUp ? (

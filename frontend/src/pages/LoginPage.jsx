@@ -18,7 +18,7 @@ const LoginPage = () => {
     login(formData);
   }
   return (
-    <div className='h-screen grid lg:grid-cols-2'>
+    <div className='min-h-screen grid lg:grid-cols-2'>
       {/* Left Side of Page */}
       <div className='flex flex-col justify-center items-center p-6 sm:p-12'>
           <div className='w-full max-w-md space-y-8'>
@@ -44,7 +44,7 @@ const LoginPage = () => {
                   <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
                     <Mail className='size-5 text-base-content/40'/>
                   </div>
-                  <input type='text'
+                  <input type='email'
                   className={`input input-bordered w-full pl-10`}
                   placeholder='you@example.com'
                   value={formData.email}
@@ -69,7 +69,7 @@ const LoginPage = () => {
                   onChange={(e) => setFormData({...formData, password: e.target.value })}
                   />
                   <button type='button'
-                      className='absoulte inset-y-0 right-0 pr-3 flex items-center'
+                      className='absolute inset-y-0 right-0 pr-3 flex items-center'
                       onClick={() => setShowPassword(!showPassword)}>
                         {showPassword ? (
                         <EyeOff className='size-5 text-base-content/40' />
