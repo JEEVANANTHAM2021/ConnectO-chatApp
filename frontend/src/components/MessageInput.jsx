@@ -81,15 +81,15 @@ const MessageInput = () => {
                     onChange={handleImageChange}
             />
             <button type='button'
-                    className={`hidden sm:flex btn btn-circle ${imagePreview ? "text-emerald-500" : "text-zinc-400"}`}
+                    className={`items-center justify-center sm:mt-2 sm:flex btn-sm btn btn-circle ${imagePreview ? "text-emerald-500" : "text-zinc-400"}`}
                     onClick={() => fileInputRef.current?.click()}>
                 <Image size={20} />
             </button>
         </div>
         <button type='submit'
-                className='btn btn-sm btn-circle'
+                className='items-center justify-center btn btn-sm btn-circle'
                 disabled= {!text.trim() && !imagePreview}>
-            <Send size={22}/>
+            <Send size={22} className='items-center justify-center'/>
         </button>
 
       </form>
