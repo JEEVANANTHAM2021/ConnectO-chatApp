@@ -18,30 +18,11 @@ const seedUsers = [
         profilePic: "https://res.cloudinary.com/dli6vsc04/image/upload/v1769315562/Boy_4_f2jrbl.png",
     },
     {
-        email: "sivasubramanian@gmail.com",
-        fullName: "Siva Kolaru",
-        password: "12345678",
-        profilePic: "https://res.cloudinary.com/dli6vsc04/image/upload/v1769315562/Boy_2_grha7i.png",
-    },
-    {
         email: "vikash@gmail.com",
         fullName: "Vikash Vk",
         password: "12345678",
         profilePic: "https://res.cloudinary.com/dli6vsc04/image/upload/v1769315591/Boy_1_jx1ewl.png"
     },
-    {
-        email: "santhosb@gmail.com",
-        fullName: "Santhos B",
-        password: "12345678",
-        profilePic: "https://res.cloudinary.com/dli6vsc04/image/upload/v1769315558/Boy_3_x3f9ry.png"
-    },
-    {
-        email: "santhosandy@gmail.com",
-        fullName: "Sandy",
-        password: "12345678",
-        profilePic: "https://res.cloudinary.com/dli6vsc04/image/upload/v1769315558/Boy_3_x3f9ry.png"
-    },
-
 
 
     // Female Users
@@ -49,13 +30,13 @@ const seedUsers = [
         email: "pavi@gmail.com",
         fullName: "Pavi",
         password: "12345678",
-        profilePic: "https://res.cloudinary.com/dli6vsc04/image/upload/v1769315558/Women_4_vwrtau.jpg"
+        profilePic: ""
     },
     {
         email: "priya@gmail.com",
         fullName: "Priya",
         password: "12345678",
-        profilePic: "https://res.cloudinary.com/dli6vsc04/image/upload/v1769315559/Women_3_rqfi1o.jpg"
+        profilePic: ""
     },
     {
         email: "kavya@gmail.com",
@@ -67,13 +48,13 @@ const seedUsers = [
         email: "madhu@gmail.com",
         fullName: "Madhu",
         password: "12345678",
-        profilePic: "https://res.cloudinary.com/dli6vsc04/image/upload/v1769315559/Women_2_spktsq.jpg"
+        profilePic: ""
     },
     {
         email: "sowmi@gmail.com",
         fullName: "Sowmi",
         password: "12345678",
-        profilePic: "https://res.cloudinary.com/dli6vsc04/image/upload/v1769315557/Women_1_qurbnq.jpg"
+        profilePic: ""
     },
 ];
 
