@@ -1,4 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+
+
+@layer base {
+  * { font-family: 'Inter', sans-serif; }
+}
+
+@layer components {
+
+  /* Sharp card — editorial */
+  .e-card {
+    @apply bg-base-100 border border-base-content border-opacity-10 rounded-2xl shadow-sm;
+  }
+
+  /* Section label */
+  .e-label {
+    @apply text-[10px] font-bold uppercase tracking-[0.15em] text-base-content text-opacity-30;
+  }
+
+  /* Subtle input */
+  .e-input {
+    @apply w-full h-11 px-4 rounded-xl text-sm font-medium
+           bg-base-200/60 border border-base-content/10
+           placeholder:text-base-content/25 text-base-content
+           focus:outline-none focus:border-base-content border-opacity-35 focus:bg-base-200
+           transition-all duration-150;
+  }
+
+  /* Primary action button */
+  .e-btn-primary {
+    @apply h-11 px-6 rounded-xl text-sm font-semibold tracking-tight
+           bg-base-content text-base-100
+           hover:opacity-85 active:scale-[0.98]
+           transition-all duration-150 flex items-center justify-center gap-2
+           disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  /* Ghost button */
+  .e-btn-ghost {
+    @apply h-9 px-3 rounded-lg text-sm font-medium
+           text-base-content/50 hover:text-base-content hover:bg-base-content hover:bg-opacity-5
+           transition-all duration-150 flex items-center gap-1.5;
+  }
+
+  /* Sent bubble */
+  .bubble-out {
+    @apply bg-base-content text-base-100 rounded-2xl rounded-br-sm
+           px-4 py-2.5 text-sm leading-relaxed shadow-sm max-w-xs lg:max-w-sm;
+  }
+
+  /* Received bubble */
+  .bubble-in {
+    @apply bg-base-200 text-base-content rounded-2xl rounded-bl-sm
+           border border-base-content border-opacity-5
+           px-4 py-2.5 text-sm leading-relaxed max-w-xs lg:max-w-sm;
+  }
+
+  /* Online dot */
+  .online-dot {
+    @apply size-2 rounded-full bg-emerald-500 ring-2 ring-base-100
+           shadow shadow-emerald-500/50;
+  }
+
+  /* Sidebar row */
+  .sidebar-row {
+    @apply w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
+           transition-all duration-150 cursor-pointer text-left;
+  }
+  .sidebar-row:hover { @apply bg-base-content; @apply bg-opacity-10 }
+  .sidebar-row.active { @apply bg-base-content; @apply bg-opacity-5}
+}
+
+/* Thin scrollbar */
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: oklch(var(--bc)/0.12); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: oklch(var(--bc)/0.22); }

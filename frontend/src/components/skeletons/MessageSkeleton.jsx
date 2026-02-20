@@ -1,27 +1,29 @@
 import React from 'react'
 
 const MessageSkeleton = () => {
-    const skeletonMessages = Array(6).fill(null);
+  const skeletonMessages = Array(6).fill(null);
 
   return (
-    <div className='flex-1 overflow-y-auto p-4 space-y-4'>
-      {skeletonMessages.map((_, idx) => (
-        <div key={idx} className={`chat ${idx % 2 === 0 ? "chat-start" : "chat-end"}`}>
-            <div className='chat-image avatar'>
-                <div className='size-10 rounded-full'>
-                    <div className='skeleton w-full h-full rounded-full'/>
-                </div>
-            </div>
+    <div className='flex-1 overflow-y-auto px-4 sm:px-6 py-5 space-y-5'>
+      {skeletonMessages.map((_, idx) => {
+        const isMine = idx % 2 !== 0;
+        return (
+          <div key={idx}
+            className={`flex items-end gap-2.5 ${isMine ? 'flex-row-reverse' : 'flex-row'}`}>
 
-            <div className='chat-header mb-1'>
-                <div className='skeleton h-4 w-16'/>
-            </div>
+            {/* Avatar skeleton */}
+            <div className='skeleton size-7 rounded-full shrink-0' />
 
-            <div className='chat-bubble bg-transparent p-0'>
-                <div className='skeleton h-16 w-[200px]' />
+            {/* Bubble skeleton */}
+            <div className={`flex flex-col gap-1.5 ${isMine ? 'items-end' : 'items-start'}`}>
+              <div className={`skeleton rounded-2xl h-10
+                ${idx % 3 === 0 ? 'w-36 sm:w-44' : idx % 3 === 1 ? 'w-52 sm:w-64' : 'w-28 sm:w-36'}`}
+              />
+              <div className='skeleton h-2.5 w-12 rounded' />
             </div>
-        </div>
-      ))}
+          </div>
+        );
+      })}
     </div>
   )
 }

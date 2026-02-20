@@ -6,42 +6,43 @@ import { LogOut, MessageSquare, Settings, User } from 'lucide-react';
 const Navbar = () => {
   const { logout, authUser } = useAuthStore();
   return (
-    <header className='bg-base-100 border-b border-base-300 fixed w-full top-0 z-40 
-    backdrop-blur-lg bd-base-100/80'>
-        <div className='container mx-auto px-4 h-16'>
-          <div className='flex items-center justify-between h-full'>
-            <div className='flex items-center gap-8'>
-              <Link to='/' className='flex items-center gap-2.5 hover:opacity-80 transition-all'>
-                <div className='size-9 rounded-lg bg-primary/10 flex items-center justify-center'>
-                  <MessageSquare className='size-5 text-primary'/>
-                </div>
-                <h1 className='text-lg font-bold'>LocalGossip</h1>
-              </Link>
-            </div>
+    <header className='fixed w-full top-0 z-40 bg-base-100 bg-opacity-90 backdrop-blur-xl border-b border-base-content border-opacity-10'>
+      <div className='container mx-auto px-4 sm:px-6 h-14 max-w-7xl flex items-center justify-between'>
 
-            <div className='flex items-center gap-2'>
-              <Link to={"/settings"}
-                    className={`btn btn-sm gap-2 transition-colors`}>
-                <Settings className='size-4'/>
-                <span className='hidden sm:inline'>Settings</span>
-              </Link>
-
-              {authUser && (
-                <>
-                  <Link to={"/profile"} className={`btn btn-sm gap-2`}>
-                    <User className='size-5' />
-                    <span className='hidden sm:inline'>Profile</span>
-                  </Link>
-
-                  <button className='flex gap-2 items-center' onClick={logout}>
-                    <LogOut className='size-5' />
-                    <span className='hidden sm:inline'>Logout</span>
-                  </button>
-                </>
-              )}
-            </div>
+        {/* Brand */}
+        <Link to='/' className='flex items-center gap-2.5 group'>
+          <div className='size-8 rounded-lg bg-base-content flex items-center justify-center
+            group-hover:opacity-80 transition-opacity'>
+            <MessageSquare className='size-4 text-base-100' strokeWidth={2.5} />
           </div>
-        </div>
+          <span className='font-semibold text-sm tracking-tight hidden sm:block'>
+            LocalGossip
+          </span>
+        </Link>
+
+        {/* Actions */}
+        <nav className='flex items-center gap-0.5'>
+          <Link to='/settings' className='e-btn-ghost rounded-lg'>
+            <Settings className='size-3.5' strokeWidth={2} />
+            <span className='hidden sm:inline'>Settings</span>
+          </Link>
+
+          {authUser && (
+            <>
+              <Link to='/profile' className='e-btn-ghost rounded-lg'>
+                <User className='size-3.5' strokeWidth={2} />
+                <span className='hidden sm:inline'>Profile</span>
+              </Link>
+
+              <button onClick={logout}
+                className='e-btn-ghost rounded-lg hover:text-red-500 hover:bg-red-500 hover:bg-opacity-10'>
+                <LogOut className='size-3.5' strokeWidth={2} />
+                <span className='hidden sm:inline'>Logout</span>
+              </button>
+            </>
+          )}
+        </nav>
+      </div>
     </header>
   )
 }
