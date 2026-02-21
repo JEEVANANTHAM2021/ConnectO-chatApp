@@ -26,26 +26,21 @@ const Sidebar = () => {
   if (isUsersLoading) return <SidebarSkeleton />
 
   return (
-    /*
-      Mobile  → full width (w-full), shown/hidden by HomePage
-      Desktop → fixed sidebar width (lg:w-80)
-    */
     <aside className='h-full w-full lg:w-80 lg:shrink-0 flex flex-col bg-base-100 lg:border-r lg:border-base-200'>
 
       {/* ── Header ── */}
-      <div className='bg-base-200/70 border-b border-base-200 shrink-0'>
+      <div className='bg-base-200 bg-opacity-70 border-b border-base-200 shrink-0'>
 
         {/* Title row */}
         <div className='flex items-center justify-between px-4 py-3'>
           <div className='flex items-center gap-2.5'>
-            <div className='size-8 rounded-full bg-primary/15 flex items-center justify-center shrink-0'>
+            <div className='size-8 rounded-full bg-primary bg-opacity-15 flex items-center justify-center shrink-0'>
               <Users className='size-4 text-primary' strokeWidth={2} />
             </div>
-            {/* Title visible on BOTH mobile and desktop */}
             <span className='font-bold text-sm text-base-content tracking-tight'>Chats</span>
           </div>
 
-          {/* Online toggle — visible on both */}
+          {/* Online toggle */}
           <label className='flex items-center gap-2 cursor-pointer'>
             <input
               type='checkbox'
@@ -53,21 +48,18 @@ const Sidebar = () => {
               onChange={(e) => setShowOnlineOnly(e.target.checked)}
               className='toggle toggle-primary toggle-xs'
             />
-            <span className='text-xs text-base-content/50 font-medium'>Online</span>
+            <span className='text-xs text-base-content text-opacity-50 font-medium'>Online</span>
           </label>
         </div>
 
-        {/* Search bar — visible on both mobile and desktop */}
+        {/* Search bar */}
         <div className='px-3 pb-3'>
           <div className={`flex items-center gap-2 h-9 px-3 rounded-full bg-base-100 border
             transition-all duration-150
-            ${isSearchFocused
-              ? 'border-primary/50 shadow-sm shadow-primary/10'
-              : 'border-base-300'
-            }`}>
+            ${isSearchFocused ? 'border-primary border-opacity-50 shadow-sm shadow-primary/10' : 'border-base-300'}`}>
             <Search
               className={`size-3.5 shrink-0 transition-colors
-                ${isSearchFocused ? 'text-primary' : 'text-base-content/30'}`}
+                ${isSearchFocused ? 'text-primary' : 'text-base-content text-opacity-30'}`}
               strokeWidth={2}
             />
             <input
@@ -78,7 +70,7 @@ const Sidebar = () => {
               onBlur={() => setIsSearchFocused(false)}
               placeholder='Search contacts...'
               className='flex-1 text-sm bg-transparent outline-none
-                text-base-content placeholder:text-base-content/30'
+                text-base-content placeholder:text-base-content placeholder:text-opacity-30'
             />
             {searchQuery && (
               <button
@@ -86,7 +78,7 @@ const Sidebar = () => {
                 className='size-4 rounded-full bg-base-content/20 flex items-center justify-center
                   hover:bg-base-content/30 transition-colors shrink-0'
               >
-                <X className='size-2.5 text-base-content/60' strokeWidth={3} />
+                <X className='size-2.5 text-base-content text-opacity-60' strokeWidth={3} />
               </button>
             )}
           </div>
@@ -95,13 +87,14 @@ const Sidebar = () => {
         {/* Online count + result count */}
         <div className='flex items-center justify-between px-4 pb-2.5'>
           <div className='flex items-center gap-1.5'>
+            {/* FIX: explicit green color so it always shows */}
             <span className='size-1.5 rounded-full bg-success inline-block' />
             <span className='text-[11px] text-base-content/40 font-medium'>
               {onlineUsers.length - 1} online
             </span>
           </div>
           {searchQuery.trim() && (
-            <span className='text-[11px] text-base-content/40 font-medium'>
+            <span className='text-[11px] text-base-content text-opacity-40 font-medium'>
               {filteredUsers.length} result{filteredUsers.length !== 1 ? 's' : ''}
             </span>
           )}
@@ -121,24 +114,29 @@ const Sidebar = () => {
               className={`w-full flex items-center gap-3 px-4 py-3
                 border-b border-base-200/70 transition-colors duration-100 text-left
                 ${isActive
-                  ? 'bg-primary/8 border-l-2 border-l-primary'
-                  : 'hover:bg-base-200 hover:bg-opacity-60 active:bg-base-200 border-l-2 border-l-transparent'
+                  ? 'bg-primary bg-opacity-10 border-l-2 border-l-primary'
+                  : 'hover:bg-base-200 hover:bg-opacity-20 active:bg-base-200 border-l-2 border-l-transparent'
                 }`}
             >
-              {/* Avatar — same size on all screens */}
+              {/* Avatar + green dot */}
               <div className='relative shrink-0'>
                 <img
                   src={user.profilePic || 'avatar.png'}
                   alt={user.fullName}
                   className='size-12 rounded-full object-cover'
                 />
+                {/*
+                  FIX: ring-2 ring-base-100 instead of border-2 border-base-100
+                  ring is drawn outside the element so it always contrasts
+                  regardless of whatever bg color is behind the dot
+                */}
                 {isOnline && (
-                  <span className='absolute bottom-0.5 right-0.5 size-3 rounded-full
-                    bg-success border-2 border-base-100' />
+                  <span className='absolute bottom-0.5 right-0.5 size-3.5 rounded-full
+                    bg-success ring-2 ring-base-100' />
                 )}
               </div>
 
-              {/* Info — visible on all screens now (not hidden on mobile) */}
+              {/* Info */}
               <div className='flex flex-col flex-1 min-w-0'>
                 <div className='flex items-center justify-between gap-2'>
                   <span className={`text-sm font-semibold truncate
@@ -147,20 +145,27 @@ const Sidebar = () => {
                       ? highlightMatch(user.fullName, searchQuery)
                       : user.fullName}
                   </span>
-                  {/* Online badge pill — mobile friendly */}
+                  {/* Online badge pill */}
                   {isOnline && (
                     <span className='text-[10px] font-bold text-success bg-success bg-opacity-10
-                      px-1.5 py-0.5 rounded-full shrink-0'>
+                      border border-success border-opacity-20 px-1.5 py-0.5 rounded-full shrink-0'>
                       online
                     </span>
                   )}
                 </div>
-                <span className='text-xs text-base-content text-opacity-40 mt-0.5 truncate'>
-                  {isOnline ? 'Tap to chat' : 'Last seen recently'}
-                </span>
+                {/* FIX: always show status line with dot indicator */}
+                <div className='flex items-center gap-1 mt-0.5'>
+                  <span className={`size-1.5 rounded-full shrink-0
+                    ${isOnline ? 'bg-success' : 'bg-base-content bg-opacity-20'}`}
+                  />
+                  <span className={`text-xs font-medium truncate
+                    ${isOnline ? 'text-success' : 'text-base-content text-opacity-40'}`}>
+                    {isOnline ? 'Tap to chat' : 'Last seen recently'}
+                  </span>
+                </div>
               </div>
 
-              {/* Chevron arrow — mobile tap hint */}
+              {/* Chevron — mobile tap hint */}
               <svg className='size-4 text-base-content text-opacity-20 shrink-0 lg:hidden'
                 fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth={2}>
                 <path strokeLinecap='round' strokeLinejoin='round' d='M9 5l7 7-7 7' />
@@ -183,9 +188,7 @@ const Sidebar = () => {
                 {searchQuery ? 'No contacts found' : 'No users online'}
               </p>
               <p className='text-xs text-base-content text-opacity-30'>
-                {searchQuery
-                  ? `No results for "${searchQuery}"`
-                  : 'Check back later'}
+                {searchQuery ? `No results for "${searchQuery}"` : 'Check back later'}
               </p>
             </div>
             {searchQuery && (
