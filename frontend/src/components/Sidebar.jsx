@@ -1,104 +1,219 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useChatStore } from '../store/useChatStore'
-import SidebarSkeleton from './skeletons/SidebarSkeleton';
-import { Users } from 'lucide-react';
-import { useAuthStore } from '../store/useAuthStore';
+import SidebarSkeleton from './skeletons/SidebarSkeleton'
+import { Search, Users, X } from 'lucide-react'
+import { useAuthStore } from '../store/useAuthStore'
 
 const Sidebar = () => {
-  const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } = useChatStore();
-  const { onlineUsers } = useAuthStore();
-  const [showOnlineOnly, setShowOnlineOnly] = useState(false);
+  const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } = useChatStore()
+  const { onlineUsers } = useAuthStore()
+  const [showOnlineOnly, setShowOnlineOnly] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isSearchFocused, setIsSearchFocused] = useState(false)
 
-  useEffect(() => { getUsers() }, [getUsers]);
+  useEffect(() => { getUsers() }, [getUsers])
 
-  const filteredUsers = showOnlineOnly
-    ? users.filter(user => onlineUsers.includes(user._id))
-    : users;
+  const filteredUsers = users
+    .filter(user => showOnlineOnly ? onlineUsers.includes(user._id) : true)
+    .filter(user =>
+      searchQuery.trim() === ''
+        ? true
+        : user.fullName.toLowerCase().includes(searchQuery.trim().toLowerCase())
+    )
 
-  if (isUsersLoading) return <SidebarSkeleton />;
+  const clearSearch = () => setSearchQuery('')
+
+  if (isUsersLoading) return <SidebarSkeleton />
 
   return (
-    <aside className='h-full w-16 lg:w-64 shrink-0 flex flex-col border-r border-base-content border-opacity-10'>
+    /*
+      Mobile  → full width (w-full), shown/hidden by HomePage
+      Desktop → fixed sidebar width (lg:w-80)
+    */
+    <aside className='h-full w-full lg:w-80 lg:shrink-0 flex flex-col bg-base-100 lg:border-r lg:border-base-200'>
 
-      {/* Header */}
-      <div className='px-3 lg:px-4 py-4 border-b border-base-content border-opacity-10'>
-        <div className='flex items-center gap-2.5'>
-          <div className='size-7 rounded-md bg-base-content bg-opacity-10 flex items-center justify-center shrink-0'>
-            <Users className='size-3.5 text-base-content text-opacity-50' strokeWidth={2} />
+      {/* ── Header ── */}
+      <div className='bg-base-200/70 border-b border-base-200 shrink-0'>
+
+        {/* Title row */}
+        <div className='flex items-center justify-between px-4 py-3'>
+          <div className='flex items-center gap-2.5'>
+            <div className='size-8 rounded-full bg-primary/15 flex items-center justify-center shrink-0'>
+              <Users className='size-4 text-primary' strokeWidth={2} />
+            </div>
+            {/* Title visible on BOTH mobile and desktop */}
+            <span className='font-bold text-sm text-base-content tracking-tight'>Chats</span>
           </div>
-          <span className='hidden lg:block text-sm font-semibold tracking-tight'>Messages</span>
+
+          {/* Online toggle — visible on both */}
+          <label className='flex items-center gap-2 cursor-pointer'>
+            <input
+              type='checkbox'
+              checked={showOnlineOnly}
+              onChange={(e) => setShowOnlineOnly(e.target.checked)}
+              className='toggle toggle-primary toggle-xs'
+            />
+            <span className='text-xs text-base-content/50 font-medium'>Online</span>
+          </label>
         </div>
 
-        {/* Online filter */}
-        <div className='hidden lg:flex items-center justify-between mt-3.5'>
-          <label className='flex items-center gap-2 cursor-pointer group'>
-            <div className='relative'>
-              <input type="toggle" checked={showOnlineOnly}
-                onChange={(e) => setShowOnlineOnly(e.target.checked)}
-                className='sr-only peer'
-              />
-              <div className='w-8 h-4 rounded-full bg-base-content bg-opacity-15 peer-checked:bg-base-content peer-checked:bg-opacity-10
-                transition-colors duration-200 cursor-pointer'
-                onClick={() => setShowOnlineOnly(!showOnlineOnly)}
-              />
-              <div className={`absolute top-0.5 size-3 rounded-full bg-base-100 shadow transition-all duration-200
-                ${showOnlineOnly ? 'left-[18px]' : 'left-0.5'}`}
-                onClick={() => setShowOnlineOnly(!showOnlineOnly)}
-              />
-            </div>
-            <span className='text-xs text-base-content text-opacity-40 group-hover:text-base-content group-hover:text-opacity-60 transition-colors'>
-              Online only
+        {/* Search bar — visible on both mobile and desktop */}
+        <div className='px-3 pb-3'>
+          <div className={`flex items-center gap-2 h-9 px-3 rounded-full bg-base-100 border
+            transition-all duration-150
+            ${isSearchFocused
+              ? 'border-primary/50 shadow-sm shadow-primary/10'
+              : 'border-base-300'
+            }`}>
+            <Search
+              className={`size-3.5 shrink-0 transition-colors
+                ${isSearchFocused ? 'text-primary' : 'text-base-content/30'}`}
+              strokeWidth={2}
+            />
+            <input
+              type='text'
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
+              placeholder='Search contacts...'
+              className='flex-1 text-sm bg-transparent outline-none
+                text-base-content placeholder:text-base-content/30'
+            />
+            {searchQuery && (
+              <button
+                onClick={clearSearch}
+                className='size-4 rounded-full bg-base-content/20 flex items-center justify-center
+                  hover:bg-base-content/30 transition-colors shrink-0'
+              >
+                <X className='size-2.5 text-base-content/60' strokeWidth={3} />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Online count + result count */}
+        <div className='flex items-center justify-between px-4 pb-2.5'>
+          <div className='flex items-center gap-1.5'>
+            <span className='size-1.5 rounded-full bg-success inline-block' />
+            <span className='text-[11px] text-base-content/40 font-medium'>
+              {onlineUsers.length - 1} online
             </span>
-          </label>
-          <span className='text-[10px] font-semibold px-1.5 py-0.5 rounded-md
-            bg-base-content bg-opacity-10 text-base-content text-opacity-40'>
-            {onlineUsers.length - 1}
-          </span>
+          </div>
+          {searchQuery.trim() && (
+            <span className='text-[11px] text-base-content/40 font-medium'>
+              {filteredUsers.length} result{filteredUsers.length !== 1 ? 's' : ''}
+            </span>
+          )}
         </div>
       </div>
 
-      {/* List */}
-      <div className='flex-1 overflow-y-auto py-2 px-2'>
+      {/* ── Contact list ── */}
+      <div className='flex-1 overflow-y-auto'>
         {filteredUsers.map((user) => {
-          const isActive = selectedUser?._id === user._id;
-          const isOnline = onlineUsers.includes(user._id);
-          return (
-            <button key={user._id} onClick={() => setSelectedUser(user)}
-              className={`sidebar-row w-full ${isActive ? 'active' : ''}`}>
+          const isActive = selectedUser?._id === user._id
+          const isOnline = onlineUsers.includes(user._id)
 
-              {/* Avatar */}
-              <div className='relative mx-auto lg:mx-0 shrink-0'>
-                <img src={user.profilePic || "avatar.png"} alt={user.name}
-                  className={`size-9 rounded-full object-cover ring-2 transition-all
-                    ${isActive ? 'ring-base-content/25' : 'ring-transparent'}`}
+          return (
+            <button
+              key={user._id}
+              onClick={() => setSelectedUser(user)}
+              className={`w-full flex items-center gap-3 px-4 py-3
+                border-b border-base-200/70 transition-colors duration-100 text-left
+                ${isActive
+                  ? 'bg-primary/8 border-l-2 border-l-primary'
+                  : 'hover:bg-base-200 hover:bg-opacity-60 active:bg-base-200 border-l-2 border-l-transparent'
+                }`}
+            >
+              {/* Avatar — same size on all screens */}
+              <div className='relative shrink-0'>
+                <img
+                  src={user.profilePic || 'avatar.png'}
+                  alt={user.fullName}
+                  className='size-12 rounded-full object-cover'
                 />
                 {isOnline && (
-                  <span className='online-dot absolute bottom-0 right-0' />
+                  <span className='absolute bottom-0.5 right-0.5 size-3 rounded-full
+                    bg-success border-2 border-base-100' />
                 )}
               </div>
 
-              {/* Info */}
-              <div className='hidden lg:flex flex-col min-w-0 flex-1'>
-                <span className={`text-sm font-medium truncate leading-tight
-                  ${isActive ? 'text-base-content' : 'text-base-content text-opacity-75'}`}>
-                  {user.fullName}
-                </span>
-                <span className={`text-xs mt-0.5 font-medium
-                  ${isOnline ? 'text-emerald-500' : 'text-base-content text-opacity-30'}`}>
-                  {isOnline ? 'Active now' : 'Offline'}
+              {/* Info — visible on all screens now (not hidden on mobile) */}
+              <div className='flex flex-col flex-1 min-w-0'>
+                <div className='flex items-center justify-between gap-2'>
+                  <span className={`text-sm font-semibold truncate
+                    ${isActive ? 'text-primary' : 'text-base-content'}`}>
+                    {searchQuery.trim()
+                      ? highlightMatch(user.fullName, searchQuery)
+                      : user.fullName}
+                  </span>
+                  {/* Online badge pill — mobile friendly */}
+                  {isOnline && (
+                    <span className='text-[10px] font-bold text-success bg-success bg-opacity-10
+                      px-1.5 py-0.5 rounded-full shrink-0'>
+                      online
+                    </span>
+                  )}
+                </div>
+                <span className='text-xs text-base-content text-opacity-40 mt-0.5 truncate'>
+                  {isOnline ? 'Tap to chat' : 'Last seen recently'}
                 </span>
               </div>
+
+              {/* Chevron arrow — mobile tap hint */}
+              <svg className='size-4 text-base-content text-opacity-20 shrink-0 lg:hidden'
+                fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth={2}>
+                <path strokeLinecap='round' strokeLinejoin='round' d='M9 5l7 7-7 7' />
+              </svg>
             </button>
-          );
+          )
         })}
 
+        {/* Empty state */}
         {filteredUsers.length === 0 && (
-          <p className='text-center text-xs text-base-content text-opacity-30 py-10 px-4'>
-            No users online
-          </p>
+          <div className='flex flex-col items-center justify-center py-20 gap-3 px-6'>
+            <div className='size-16 rounded-full bg-base-200 flex items-center justify-center'>
+              {searchQuery
+                ? <Search className='size-6 text-base-content text-opacity-25' strokeWidth={1.5} />
+                : <Users className='size-6 text-base-content text-opacity-25' strokeWidth={1.5} />
+              }
+            </div>
+            <div className='text-center space-y-1'>
+              <p className='text-sm text-base-content text-opacity-40 font-medium'>
+                {searchQuery ? 'No contacts found' : 'No users online'}
+              </p>
+              <p className='text-xs text-base-content text-opacity-30'>
+                {searchQuery
+                  ? `No results for "${searchQuery}"`
+                  : 'Check back later'}
+              </p>
+            </div>
+            {searchQuery && (
+              <button
+                onClick={clearSearch}
+                className='text-sm text-primary font-semibold hover:underline underline-offset-2 mt-1'>
+                Clear search
+              </button>
+            )}
+          </div>
         )}
       </div>
     </aside>
+  )
+}
+
+// Highlights matched portion of a name
+function highlightMatch(name, query) {
+  const index = name.toLowerCase().indexOf(query.trim().toLowerCase())
+  if (index === -1) return name
+  return (
+    <>
+      {name.slice(0, index)}
+      <mark className='bg-primary bg-opacity-20 text-primary rounded-sm px-0.5 not-italic'>
+        {name.slice(index, index + query.trim().length)}
+      </mark>
+      {name.slice(index + query.trim().length)}
+    </>
   )
 }
 

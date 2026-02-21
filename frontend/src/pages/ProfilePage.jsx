@@ -1,128 +1,136 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useAuthStore } from '../store/useAuthStore'
-import { Camera, Mail, User } from 'lucide-react';
+import { Camera, Mail, User } from 'lucide-react'
 
 const ProfilePage = () => {
-  const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
-  const [selectedImg, setSelectedImg] = useState(null);
+  const { authUser, isUpdatingProfile, updateProfile } = useAuthStore()
+  const [selectedImg, setSelectedImg] = useState(null)
 
   const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
+    const file = e.target.files[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
     reader.onload = async () => {
-      const base64Image = reader.result;
-      setSelectedImg(base64Image);
-      await updateProfile({ profilePic: base64Image });
-    };
-  };
+      const base64Image = reader.result
+      setSelectedImg(base64Image)
+      await updateProfile({ profilePic: base64Image })
+    }
+  }
 
   return (
     <div className='min-h-screen bg-base-200 pt-14'>
-      <div className='max-w-xl mx-auto px-4 py-8 sm:py-12 space-y-4'>
+      <div className='max-w-lg mx-auto px-4 py-6 sm:py-10 space-y-3'>
 
         {/* Page heading */}
-        <div className='mb-6 px-1'>
-          <h1 className='text-xl font-bold tracking-tight'>Profile</h1>
-          <p className='text-sm text-base-content text-opacity-45 mt-0.5'>Manage your account details</p>
+        <div className='px-1 mb-2'>
+          <h1 className='text-lg font-bold text-base-content'>Profile</h1>
+          <p className='text-sm text-base-content text-opacity-40 mt-0.5'>Your personal information</p>
         </div>
 
-        {/* Avatar card */}
-        <div className='e-card p-6 sm:p-7'>
-          <div className='flex flex-col sm:flex-row items-center sm:items-start gap-5'>
+        {/* Avatar card — WA banner style */}
+        <div className='bg-base-100 rounded-2xl border border-base-200 overflow-hidden shadow-sm'>
+          {/* Green banner */}
+          <div className='h-20 bg-gradient-to-r from-primary/80 to-primary/60' />
 
-            {/* Avatar */}
-            <div className='relative shrink-0'>
-              <img
-                src={selectedImg || authUser.profilePic || "/avatar.png"}
-                alt='profile'
-                className='size-20 sm:size-24 rounded-2xl object-cover
-                  ring-2 ring-base-content ring-opacity-10 shadow-sm'
-              />
-              <label htmlFor='avatar-upload'
-                className={`absolute -bottom-2 -right-2 size-8 rounded-lg flex items-center justify-center
-                  border-2 border-base-100 shadow-md cursor-pointer transition-all duration-200
-                  ${isUpdatingProfile
-                    ? 'bg-base-content bg-opacity-40 cursor-not-allowed animate-pulse'
-                    : 'bg-base-content hover:opacity-80'
-                  }`}>
-                <Camera className='size-3.5 text-base-100' strokeWidth={2} />
-                <input type='file' id='avatar-upload' className='hidden'
-                  accept='image/*' onChange={handleImageUpload} disabled={isUpdatingProfile}
+          <div className='px-5 sm:px-6 pb-6'>
+            {/* Avatar overlapping banner */}
+            <div className='-mt-10 mb-4 flex items-end justify-between'>
+              <div className='relative'>
+                <img
+                  src={selectedImg || authUser.profilePic || '/avatar.png'}
+                  alt='profile'
+                  className='size-20 rounded-full object-cover border-4 border-base-100 shadow-md'
                 />
-              </label>
+                <label
+                  htmlFor='avatar-upload'
+                  className={`absolute bottom-0.5 right-0.5 size-7 rounded-full
+                    flex items-center justify-center border-2 border-base-100
+                    shadow cursor-pointer transition-all duration-150
+                    ${isUpdatingProfile
+                      ? 'bg-base-300 cursor-not-allowed animate-pulse'
+                      : 'bg-primary hover:opacity-85 active:scale-95'
+                    }`}
+                >
+                  <Camera className='size-3.5 text-primary-content' strokeWidth={2} />
+                  <input
+                    type='file'
+                    id='avatar-upload'
+                    className='hidden'
+                    accept='image/*'
+                    onChange={handleImageUpload}
+                    disabled={isUpdatingProfile}
+                  />
+                </label>
+              </div>
+
+              {/* Active badge */}
+              <div className='mb-1 flex items-center gap-1.5 px-3 py-1.5 rounded-full
+                bg-success bg-opacity-25 border border-success border-opacity-25'>
+                <span className='size-1.5 rounded-full bg-success animate-pulse' />
+                <span className='text-xs font-semibold text-success'>Active</span>
+              </div>
             </div>
 
-            {/* Info */}
-            <div className='flex-1 text-center sm:text-left'>
-              <h2 className='text-lg font-semibold tracking-tight'>{authUser?.fullName}</h2>
-              <p className='text-sm text-base-content text-opacity-30 mt-0.5'>{authUser?.email}</p>
-              <p className={`text-xs font-medium mt-3 flex items-center justify-center sm:justify-start gap-1.5
-                ${isUpdatingProfile ? 'text-base-content text-opacity-50' : 'text-base-content text-opacity-30'}`}>
-                {isUpdatingProfile
-                  ? <><span className='loading loading-dots loading-xs' /> Uploading photo...</>
-                  : 'Click the camera icon to update your photo'}
+            <h2 className='text-lg font-bold text-base-content'>{authUser?.fullName}</h2>
+            <p className='text-sm text-base-content text-opacity-45 mt-0.5'>{authUser?.email}</p>
+            <p className={`text-xs mt-2.5 flex items-center gap-1.5
+              ${isUpdatingProfile ? 'text-primary' : 'text-base-content text-opacity-30'}`}>
+              {isUpdatingProfile
+                ? <><span className='loading loading-dots loading-xs' /> Uploading photo...</>
+                : 'Tap the camera icon to change your photo'}
+            </p>
+          </div>
+        </div>
+
+        {/* Info card */}
+        <div className='bg-base-100 rounded-2xl border border-base-200 overflow-hidden shadow-sm'>
+          <div className='px-5 py-3 border-b border-base-200'>
+            <span className='section-label'>Personal info</span>
+          </div>
+
+          <div className='info-row'>
+            <div className='size-9 rounded-full bg-primary bg-opacity-10 flex items-center justify-center shrink-0'>
+              <User className='size-4 text-primary' strokeWidth={1.8} />
+            </div>
+            <div className='flex-1 min-w-0'>
+              <p className='section-label mb-0.5'>Full name</p>
+              <p className='text-sm font-semibold text-base-content truncate'>
+                {authUser?.fullName}
+              </p>
+            </div>
+          </div>
+
+          <div className='info-row'>
+            <div className='size-9 rounded-full bg-primary bg-opacity-10 flex items-center justify-center shrink-0'>
+              <Mail className='size-4 text-primary' strokeWidth={1.8} />
+            </div>
+            <div className='flex-1 min-w-0'>
+              <p className='section-label mb-0.5'>Email address</p>
+              <p className='text-sm font-semibold text-base-content truncate'>
+                {authUser?.email}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Details card */}
-        <div className='e-card overflow-hidden'>
-          <div className='px-6 py-4 border-b border-base-content border-opacity-10'>
-            <h3 className='e-label'>Account details</h3>
+        {/* Account card */}
+        <div className='bg-base-100 rounded-2xl border border-base-200 overflow-hidden shadow-sm'>
+          <div className='px-5 py-3 border-b border-base-200'>
+            <span className='section-label'>Account</span>
           </div>
-
-          <div className='divide-y divide-base-content divide-opacity-10'>
-            {/* Full Name */}
-            <div className='px-6 py-4 flex items-center gap-3'>
-              <div className='size-8 rounded-lg bg-base-content bg-opacity-10 flex items-center justify-center shrink-0'>
-                <User className='size-3.5 text-base-content text-opacity-40' strokeWidth={1.8} />
-              </div>
-              <div className='flex-1 min-w-0'>
-                <p className='e-label'>Full name</p>
-                <p className='text-sm font-medium text-base-content mt-0.5 truncate'>
-                  {authUser?.fullName}
-                </p>
-              </div>
-            </div>
-
-            {/* Email */}
-            <div className='px-6 py-4 flex items-center gap-3'>
-              <div className='size-8 rounded-lg bg-base-content bg-opacity-10 flex items-center justify-center shrink-0'>
-                <Mail className='size-3.5 text-base-content text-opacity-40' strokeWidth={1.8} />
-              </div>
-              <div className='flex-1 min-w-0'>
-                <p className='e-label'>Email address</p>
-                <p className='text-sm font-medium text-base-content mt-0.5 truncate'>
-                  {authUser?.email}
-                </p>
-              </div>
-            </div>
+          <div className='flex items-center justify-between px-5 py-4 border-b border-base-200'>
+            <span className='text-sm text-base-content text-opacity-55'>Member since</span>
+            <span className='text-sm font-bold text-base-content'>
+              {authUser.createdAt?.split('T')[0]}
+            </span>
           </div>
-        </div>
-
-        {/* Account info card */}
-        <div className='e-card overflow-hidden'>
-          <div className='px-6 py-4 border-b border-base-content border-opacity-10'>
-            <h3 className='e-label'>Account information</h3>
-          </div>
-          <div className='divide-y divide-base-content divide-opacity-10'>
-            <div className='px-6 py-4 flex items-center justify-between'>
-              <span className='text-sm text-base-content text-opacity-50'>Member since</span>
-              <span className='text-sm font-semibold text-base-content'>
-                {authUser.createdAt?.split("T")[0]}
-              </span>
-            </div>
-            <div className='px-6 py-4 flex items-center justify-between'>
-              <span className='text-sm text-base-content/50'>Account status</span>
-              <span className='inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600
-                bg-emerald-500 bg-opacity-10 border border-emerald-500 border-opacity-20 px-2.5 py-1 rounded-lg'>
-                <span className='size-1.5 rounded-full bg-emerald-500 animate-pulse inline-block' />
-                Active
-              </span>
-            </div>
+          <div className='flex items-center justify-between px-5 py-4'>
+            <span className='text-sm text-base-content text-opacity-55'>Account status</span>
+            <span className='flex items-center gap-1.5 text-xs font-bold text-success'>
+              <span className='size-2 rounded-full bg-success animate-pulse' />
+              Active
+            </span>
           </div>
         </div>
 

@@ -1,41 +1,59 @@
-import { useChatStore } from "../store/useChatStore"
+import { useChatStore } from '../store/useChatStore'
 import { useAuthStore } from '../store/useAuthStore'
-import { X } from 'lucide-react'
+import { ArrowLeft, X } from 'lucide-react'
 
 const ChatHeader = () => {
-  const { selectedUser, setSelectedUser } = useChatStore();
-  const { onlineUsers } = useAuthStore();
-  const isOnline = onlineUsers.includes(selectedUser._id);
+  const { selectedUser, setSelectedUser } = useChatStore()
+  const { onlineUsers } = useAuthStore()
+  const isOnline = onlineUsers.includes(selectedUser._id)
 
   return (
-    <div className='px-4 sm:px-5 py-3.5 border-b border-base-content border-opacity-10 flex items-center justify-between shrink-0'>
+    <div className='flex items-center justify-between px-3 sm:px-4 py-3
+      bg-base-200 bg-opacity-70 border-b border-base-200 shrink-0'>
 
-      <div className='flex items-center gap-3 min-w-0'>
-        {/* Avatar */}
+      <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
+
+        {/* ← Back arrow — mobile only, goes back to contact list */}
+        <button
+          onClick={() => setSelectedUser(null)}
+          className='lg:hidden icon-btn shrink-0 -ml-1'
+          aria-label='Back to contacts'
+        >
+          <ArrowLeft className='size-5 text-base-content text-opacity-60' strokeWidth={2.5} />
+        </button>
+
+        {/* Avatar + online dot */}
         <div className='relative shrink-0'>
-          <img src={selectedUser.profilePic || "avatar.png"} alt={selectedUser.fullName}
-            className='size-9 rounded-full object-cover ring-2 ring-base-content ring-opacity-10' />
-          {isOnline && <span className='online-dot absolute -bottom-px -right-px' />}
+          <img
+            src={selectedUser.profilePic || 'avatar.png'}
+            alt={selectedUser.fullName}
+            className='size-16 sm:size-12 rounded-full object-cover'
+          />
+          {isOnline && (
+            <span className='absolute bottom-0 right-0 size-2.5 rounded-full
+              bg-success border-2 border-base-200' />
+          )}
         </div>
 
-        {/* Info */}
+        {/* Name + status */}
         <div className='min-w-0'>
-          <h3 className='text-sm font-semibold text-base-content tracking-tight truncate'>
+          <h3 className='text-md sm:text-lg font-bold text-base-content truncate tracking-tight'>
             {selectedUser.fullName}
           </h3>
           <p className={`text-xs font-medium mt-0.5
-            ${isOnline ? 'text-emerald-500' : 'text-base-content text-opacity-30'}`}>
-            {isOnline ? 'Active now' : 'Offline'}
+            ${isOnline ? 'text-success' : 'text-base-content text-opacity-35'}`}>
+            {isOnline ? 'Online' : 'Last seen recently'}
           </p>
         </div>
       </div>
 
-      {/* Close */}
-      <button onClick={() => setSelectedUser(null)}
-        className='size-8 rounded-lg flex items-center justify-center shrink-0
-          text-base-content text-opacity-35 hover:text-base-content hover:text-opacity-70 hover:bg-base-content hover:bg-opacity-10
-          transition-all duration-150'>
-        <X className='size-4' strokeWidth={2} />
+      {/* ✕ Close — desktop only */}
+      <button
+        onClick={() => setSelectedUser(null)}
+        className='icon-btn hidden lg:flex'
+        aria-label='Close chat'
+      >
+        <X className='size-5' strokeWidth={2} />
       </button>
     </div>
   )

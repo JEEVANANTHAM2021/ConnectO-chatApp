@@ -1,95 +1,120 @@
-import React, { useRef, useState } from 'react'
-import { useChatStore } from '../store/useChatStore';
-import { Send, X, Image } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { useRef, useState } from 'react'
+import { useChatStore } from '../store/useChatStore'
+import { Image, Loader2, Send, X } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 const MessageInput = () => {
-  const [text, setText] = useState('');
-  const [imagePreview, setImagePreview] = useState(null);
-  const fileInputRef = useRef(null);
-  const { sendMessage } = useChatStore();
+  const [text, setText] = useState('')
+  const [imagePreview, setImagePreview] = useState(null)
+  const [isSending, setIsSending] = useState(false)
+  const fileInputRef = useRef(null)
+  const { sendMessage } = useChatStore()
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file");
-      return;
+    const file = e.target.files[0]
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file')
+      return
     }
-    const reader = new FileReader();
-    reader.onloadend = () => { setImagePreview(reader.result); };
-    reader.readAsDataURL(file);
-  };
+    const reader = new FileReader()
+    reader.onloadend = () => { setImagePreview(reader.result) }
+    reader.readAsDataURL(file)
+  }
 
   const removeImage = () => {
-    setImagePreview(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
+    setImagePreview(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
 
   const handleSendMessage = async (e) => {
-    e.preventDefault();
-    if (!text.trim() && !imagePreview) return;
-    try {
-      await sendMessage({ text: text.trim(), image: imagePreview });
-      setText("");
-      setImagePreview(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    } catch (error) {
-      console.log("Failed to send message:", error);
-    }
-  };
+    e.preventDefault()
+    if (!text.trim() && !imagePreview) return
+    if (isSending) return
 
-  const canSend = text.trim() || imagePreview;
+    setIsSending(true)
+    try {
+      await sendMessage({ text: text.trim(), image: imagePreview })
+      setText('')
+      setImagePreview(null)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    } catch (error) {
+      console.log('Failed to send message:', error)
+      toast.error('Failed to send. Try again.')
+    } finally {
+      setIsSending(false)
+    }
+  }
+
+  const canSend = (text.trim() || imagePreview) && !isSending
 
   return (
-    <div className='px-4 sm:px-5 py-3.5 border-t border-base-content border-opacity-10 bg-base-100 shrink-0'>
+    <div className='px-4 sm:px-4 py-3 bg-base-200 bg-opacity-70 border-t border-base-200 shrink-0'>
 
-      {/* Image preview */}
+      {/* Image preview strip */}
       {imagePreview && (
         <div className='mb-3 flex items-center gap-3'>
           <div className='relative'>
-            <img src={imagePreview} alt='Preview'
-              className='size-14 object-cover rounded-xl border border-base-content border-opacity-10 shadow-sm'
+            <img
+              src={imagePreview}
+              alt='Preview'
+              className='size-14 object-cover rounded-xl border border-base-300 shadow-sm'
             />
-            <button onClick={removeImage} type='button'
-              className='absolute -top-1.5 -right-1.5 size-5 rounded-full flex items-center justify-center
-                bg-base-content text-base-100 shadow hover:opacity-75 transition-opacity'>
-              <X className='size-3' strokeWidth={2.5} />
-            </button>
+            {!isSending && (
+              <button
+                onClick={removeImage}
+                type='button'
+                className='absolute -top-1.5 -right-1.5 size-5 rounded-full
+                  bg-base-content text-base-100 flex items-center justify-center
+                  hover:opacity-75 transition-opacity shadow-md'
+              >
+                <X className='size-3' strokeWidth={3} />
+              </button>
+            )}
           </div>
-          <span className='text-xs text-base-content text-opacity-35 font-medium'>Image attached</span>
+          {isSending && (
+            <span className='text-xs text-base-content text-opacity-40 flex items-center gap-1.5 font-medium'>
+              <Loader2 className='size-3.5 animate-spin text-primary' />
+              Sending image...
+            </span>
+          )}
         </div>
       )}
 
       {/* Input row */}
       <form onSubmit={handleSendMessage} className='flex items-center gap-2'>
 
-        {/* Attach image */}
-        <input type="file" accept='image/*' className='hidden' ref={fileInputRef} onChange={handleImageChange} />
-        <button type='button' onClick={() => fileInputRef.current?.click()}
-          className={`size-9 rounded-xl flex items-center justify-center shrink-0 transition-all duration-150
-            ${imagePreview
-              ? 'bg-base-content text-base-100'
-              : 'text-base-content text-opacity-40 hover:text-base-content hover:text-opacity-70 hover:bg-base-content hover:bg-opacity-5'
-            }`}>
-          <Image className='size-4' strokeWidth={1.8} />
+        {/* Image attach */}
+        <input
+          type='file'
+          accept='image/*'
+          className='hidden'
+          ref={fileInputRef}
+          onChange={handleImageChange}
+        />
+        <button
+          type='button'
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isSending}
+          className={`icon-btn transition-all ${imagePreview ? 'text-primary bg-primary bg-opacity-10' : ''}`}
+        >
+          <Image className='size-5' strokeWidth={1.8} />
         </button>
 
-        {/* Text field */}
-        <input type="text"
-          className='e-input flex-1 rounded-xl h-10 sm:h-11'
-          placeholder='Message...'
+        {/* Text */}
+        <input
+          type='text'
+          className='chat-input'
+          placeholder='Type a message'
           value={text}
           onChange={(e) => setText(e.target.value)}
+          disabled={isSending}
         />
 
         {/* Send */}
-        <button type='submit' disabled={!canSend}
-          className={`size-9 sm:size-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-150
-            ${canSend
-              ? 'bg-base-content text-base-100 hover:opacity-80 active:scale-95'
-              : 'bg-base-content bg-opacity-10 text-base-content text-opacity-25 cursor-not-allowed'
-            }`}>
-          <Send className='size-4' strokeWidth={2} />
+        <button type='submit' disabled={!canSend} className='send-btn'>
+          {isSending
+            ? <Loader2 className='size-4 animate-spin' />
+            : <Send className='size-4' strokeWidth={2} />}
         </button>
       </form>
     </div>
